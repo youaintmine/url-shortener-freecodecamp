@@ -29,6 +29,7 @@ app.post('/api/shorturl',async (req, res) => {
 
   const fullUrl = req.body['url'].toString();
   var inputUrl;
+  console.log(fullUrl);
 
   if(fullUrl.substr(0,8)==="https://"){
     inputUrl = fullUrl.substr(8);
@@ -38,11 +39,14 @@ app.post('/api/shorturl',async (req, res) => {
     return res.json({ error: 'invalid url' });
   }
 
+  console.log(inputUrl);
+
   await dns.lookup(inputUrl, (err, address, family) => {
     if(err){
       return res.json({ error: 'invalid url' });
     }else{
       console.log(`address : ${address} \n family : ${family}`);
+      console.log(urlList);
       urlList.push(fullUrl);
       return res.json({
         original_url : fullUrl,
