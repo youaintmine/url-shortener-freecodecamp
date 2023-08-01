@@ -12,6 +12,7 @@ let urlList = [];
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
 
 app.use('/public', express.static(`${process.cwd()}/public`));
 
@@ -24,41 +25,43 @@ app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
 });
 
-app.post('/api/shorturl/:id?', (req, res) => {
+app.post('/api/shorturl',async (req, res) => {
 
-  const id = req.params.id;
+  const fullUrl = req.body['url'].toString();
+  var inputUrl;
 
-  if(id){
-    //check
-    if(id < urlList.length()){
-      return res.json({
-        error: 'invalid url'
-      });
-    }else {
-      const url = urlList[id-1];
-      return res.redirect(url);
-    }
+  if(fullUrl.substr(0,8)==="https://"){
+    inputUrl = fullUrl.substr(8);
+  }else if(fullUrl.substr(0,7)==="http://"){
+    inputUrl = fullUrl.substr(7);
+  }else {
+    return res.json({ error: 'invalid url' });
   }
 
-
-  const inputUrl = req.body['url'];
-  console.log(req.body);
-
-  dns.lookup(inputUrl, (err, address, family) => {
+  await dns.lookup(inputUrl, (err, address, family) => {
     if(err){
       return res.json({ error: 'invalid url' });
     }else{
-      urlList.push(inputUrl);
+      console.log(`address : ${address} \n family : ${family}`);
+      urlList.push(fullUrl);
       return res.json({
-        original_url : inputUrl,
-        short_url : urlList.length()
+        original_url : fullUrl,
+        short_url : urlList.length
       });
     }
   });
-  
 });
 
-app.get('/api/shorturl/:')
+app.get('/api/shorturl/:idx', async (req,res) => {
+  console.log(req.params.idx);
+
+  const idx = req.params.idx;
+
+  if(idx <= urlList.length){
+    return res.redirect(urlList.at(idx-1));
+  }
+  return res.json({ error: 'invalid url' });
+})
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
