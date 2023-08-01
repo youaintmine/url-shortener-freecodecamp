@@ -3,6 +3,7 @@ const dns = require('dns');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const urlparser = require('url')
 const app = express();
 
 // Basic Configuration
@@ -27,33 +28,20 @@ app.get('/api/hello', function(req, res) {
 
 app.post('/api/shorturl',async (req, res) => {
 
-  const fullUrl = req.body['url'].toString();
-  var inputUrl;
-  console.log(fullUrl);
-
-  if(fullUrl.substr(0,8)==="https://"){
-    inputUrl = fullUrl.substr(8);
-  }else if(fullUrl.substr(0,7)==="http://"){
-    inputUrl = fullUrl.substr(7);
-  }else {
-    return res.json({ error: 'invalid url' });
-  }
-
-  console.log(inputUrl);
-
-  await dns.lookup(inputUrl, (err, address, family) => {
-    if(err){
-      return res.json({ error: 'invalid url' });
-    }else{
-      console.log(`address : ${address} \n family : ${family}`);
+  const url = req.body.url;
+  const dnslookup = dns.lookup(urlparser.parse(url).hostname, 
+  async (err, address) => {
+    if(!address){
+      res.json({error : "Invalid URL"})
+    }else {
+      urlList.push(url);
       console.log(urlList);
-      urlList.push(fullUrl);
-      return res.json({
-        original_url : fullUrl,
+      res.json({
+        original_url : url,
         short_url : urlList.length
-      });
+      })
     }
-  });
+  })
 });
 
 app.get('/api/shorturl/:idx', async (req,res) => {
