@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const app = express();
 
 // Basic Configuration
@@ -9,6 +10,8 @@ let urlList = [];
 
 
 app.use(cors());
+app.use(bodyParser);
+app.use(bodyParser.urlencoded);
 
 app.use('/public', express.static(`${process.cwd()}/public`));
 
