@@ -4,7 +4,7 @@
   "description": "API project for freeCodeCamp",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "dev": "nodemon index.js"
   },
   "dependencies": {
@@ -15,6 +15,6 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.22"
   }
 }
