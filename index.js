@@ -42,6 +42,7 @@ app.post('/api/shorturl/:id?', (req, res) => {
 
 
   const inputUrl = req.body['url'];
+  console.log(req.body);
 
   dns.lookup(inputUrl, (err, address, family) => {
     if(err){
