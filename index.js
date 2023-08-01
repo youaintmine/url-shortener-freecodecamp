@@ -50,7 +50,7 @@ app.get('/api/shorturl/:idx', async (req,res) => {
   const idx = req.params.idx;
 
   if(idx <= urlList.length){
-    return res.redirect(urlList.at(idx-1));
+    return res.redirect(urlList[idx-1]);
   }
   return res.json({ error: 'invalid url' });
 })
